@@ -2,6 +2,7 @@ from pydantic import EmailStr
 from fastapi import status, HTTPException, Request
 from features.users import user_enums
 from utilities import logger_manager
+from bson import ObjectId
 
 
 def rais_exeption(status_code: status, message: str, exception: Exception = None):
@@ -45,7 +46,8 @@ def find_account_by_id(request: Request, id: str):
     Returns:
         dict: The found user account, or None if no user is found.
     """
-    return request.app.database["users"].find_one({"_id": id})
+    object_id = ObjectId(id)
+    return request.app.database["users"].find_one({"_id": object_id})
 
 
 def change_account_status(request: Request, id: str, status: user_enums):
@@ -60,6 +62,24 @@ def change_account_status(request: Request, id: str, status: user_enums):
     request.app.database["users"].update_one(
         {"_id": id}, {"$set": {"status": status}})
     return find_account_by_id(request, id)
+
+
+def change_account_role(request: Request, id: ObjectId, role: user_enums.UserStatus):
+    """
+    ADMIN-ONLY
+    Changes the role of a user account in the database.
+
+    Args:
+        request (Request): The request object containing the database connection.
+        id (str): The id of the user account to update.
+        status (user_enums): The new status for the user account.
+    """
+    user = request.app.database["users"].update_one(
+        {"_id": id}, {"$set": {"role": role}})
+    update_user = find_account_by_id(request, id)
+    # print('update_user')
+    # print(update_user)
+    return update_user
 
 
 ### *###**###*###

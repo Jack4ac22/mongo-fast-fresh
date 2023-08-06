@@ -16,8 +16,8 @@ class UserBase(BaseModel):
     lastName: str = Field(...)
     gender: user_enums.GenderEnum = Field(...)
     birthdate: date = Field(...)
-    status: user_enums.UserStatus = Field(default="pending")
-    role: user_enums.UserRoles = Field(default="basic")
+    status: user_enums.UserStatus = Field(default=user_enums.UserStatus.Pending)
+    role: user_enums.UserRoles = Field(default=user_enums.UserRoles.basic)
 
     @validator('birthdate', pre=True)
     def age_must_be_above_16(cls, v):
@@ -46,7 +46,8 @@ class User(UserBase):
     """The main User model, which includes an id and a password Generally used to register a new user account, not as """
     id: str = Field(default_factory=uuid.uuid4, alias="_id")
     password: str = Field(...)
-    role: user_enums.UserRoles = Field(default_factory=lambda: user_enums.UserRoles.basic)
+    role: user_enums.UserRoles = Field(
+        default_factory=lambda: user_enums.UserRoles.basic)
     status: user_enums.UserStatus
 
     @validator('password')
@@ -97,4 +98,16 @@ class UserLogIn(BaseModel):
         populate_by_name = True
         json_schema_extra = {
             "example": UserExampleData.user_log_in
+        }
+
+
+class UserRoleUpdate(BaseModel):
+    """A User update role body"""
+    id: str = Field(..., alias="_id")
+    role: user_enums.UserRoles
+
+    class Config:
+        populate_by_name = True
+        json_schema_extra = {
+            'example': UserExampleData.user_role_update
         }

@@ -2,7 +2,7 @@ from bson import ObjectId
 from config import settings
 from fastapi import APIRouter, Body, Request, Response, HTTPException, status
 from fastapi.encoders import jsonable_encoder
-from features.users import user_db, user_functions, user_enums
+from features.users import user_db, user_functions, user_enums, user_models
 from features.users.user_models import User, UserRegisteration, UserResponse, UserLogIn
 from pymongo import MongoClient, errors
 from utilities import hash_manager, jwt_manager, email_manager, logger_manager
@@ -60,10 +60,6 @@ def find_user(request: Request, id: str, user_id: str, role: str):
     """
     finding user in the data base based on the id and the user id which is provided in the token where a logic will be applied to validate the request.
     """
-# check the status and id
-    # print(id)
-    # print(user_id)
-    # print(role)
     if ((id == user_id) or (role == user_enums.UserRoles.admin)):
         try:
             object_id = ObjectId(id)
@@ -107,3 +103,17 @@ def get_users(request: Request, user_role: str):
     else:
         user_functions.rais_exeption(status.HTTP_203_NON_AUTHORITATIVE_INFORMATION,
                                      "The requested information exceeds your security level")
+
+
+def change_role(request: Request, payload: user_models.UserRoleUpdate, user_role: str):
+    if user_role == user_enums.UserRoles.admin:
+        # print("allowd")
+        # print(payload.id)
+        # retrieved_user1 = user_functions.find_account_by_id(request, payload.id)
+        # print(retrieved_user1)
+        retrieved_user = user_functions.change_account_role(request, ObjectId(payload.id), payload.role)
+        if isinstance(retrieved_user['_id'], ObjectId):
+                str_id = str(retrieved_user['_id'])
+                retrieved_user['_id'] = str_id
+        print(retrieved_user)
+        return retrieved_user
