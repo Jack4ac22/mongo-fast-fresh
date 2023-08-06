@@ -24,16 +24,15 @@ def activate_user(request: Request, token: Optional[str] = Query(None)):
 
 @router.get('/all', response_description='get all users for admin', status_code=status.HTTP_200_OK, response_model=List[user_models.UserResponse])
 def get_all_users(request: Request, user_role: str = Depends(jwt_manager.decode_token_role), user_status: str = Depends(jwt_manager.decode_token_status)):
-    # print("ok")
     return user_db.get_users(request, user_role)
+
+
+@router.post('/role', response_description='Update user role and return the updated information', status_code=status.HTTP_200_OK, response_model=user_models.UserResponse)
+def change_user_role(request: Request, payload: user_models.UserRoleUpdate, user_role: str = Depends(jwt_manager.decode_token_role)):
+    response = user_db.change_role(request, payload, user_role)
+    return response
 
 
 @router.get('/{id}', response_description='get user by id', status_code=status.HTTP_200_OK, response_model=user_models.UserResponse)
 def get_user_by_id(request: Request, id: str, user_id: str = Depends(jwt_manager.decode_access_token), role: str = Depends(jwt_manager.decode_token_role), status: str = Depends(jwt_manager.decode_token_status)):
-    # print("ok")
     return user_db.find_user(request, id, user_id, role)
-
-
-@router.post('/role', response_description='Update user role and return the updated information', response_model=user_models.UserResponse)
-def change_user_role(request: Request, payload: user_models.UserRoleUpdate, user_role: str = Depends(jwt_manager.decode_token_role)):
-    user_db.change_role(request, payload, user_role)

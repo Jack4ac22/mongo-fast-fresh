@@ -107,13 +107,11 @@ def get_users(request: Request, user_role: str):
 
 def change_role(request: Request, payload: user_models.UserRoleUpdate, user_role: str):
     if user_role == user_enums.UserRoles.admin:
-        # print("allowd")
-        # print(payload.id)
-        # retrieved_user1 = user_functions.find_account_by_id(request, payload.id)
-        # print(retrieved_user1)
-        retrieved_user = user_functions.change_account_role(request, ObjectId(payload.id), payload.role)
+        retrieved_user = user_functions.change_account_role(
+            request, ObjectId(payload.id), payload.role)
+        # print(retrieved_user)
         if isinstance(retrieved_user['_id'], ObjectId):
-                str_id = str(retrieved_user['_id'])
-                retrieved_user['_id'] = str_id
+            str_id = str(retrieved_user['_id'])
+            retrieved_user['_id'] = str_id
         print(retrieved_user)
         return retrieved_user
