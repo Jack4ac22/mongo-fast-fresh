@@ -10,5 +10,5 @@ class UserExampleData:
             "password": "password", "role": "basic", "status": "pending"}
     user_registeration = {**user_base, "password": "password"}
     user_response = {
-        "_id": "066de609-b04a-4b30-b46c-32537c7f1f6e", **user_base, "role": "basic"}
+        "_id": "066de609-b04a-4b30-b46c-32537c7f1f6e", **user_base, "role": "basic", "status": "pending"}
     user_log_in = {"email": "myemail@domain.com", "password": "password"}

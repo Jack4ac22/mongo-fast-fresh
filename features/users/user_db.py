@@ -1,13 +1,11 @@
 from bson import ObjectId
-from features.users import user_db, user_functions
-from utilities import hash_manager, jwt_manager, email_manager, logger_manager
 from config import settings
-from fastapi.encoders import jsonable_encoder
 from fastapi import APIRouter, Body, Request, Response, HTTPException, status
-from pymongo import MongoClient, errors
-from config import settings
+from fastapi.encoders import jsonable_encoder
+from features.users import user_db, user_functions, user_enums
 from features.users.user_models import User, UserRegisteration, UserResponse, UserLogIn
-from features.users import user_enums
+from pymongo import MongoClient, errors
+from utilities import hash_manager, jwt_manager, email_manager, logger_manager
 
 
 def create_new_user(request: Request, user: User):
@@ -42,15 +40,19 @@ def create_new_user(request: Request, user: User):
 
 
 def activate_email(request: Request, token: str):
-    # print('user_db.activate_email.token'+token)
     email = jwt_manager.decode_token_email_validation(token)
-    # print('user_db.activate_email.email'+ email)
     text = jwt_manager.decode_token_string(token)
-    # print('user_db.activate_email.text'+text)
-    if text == "ActivateMyAccount":
-        user = user_functions.avtivate_account(request, email)
-        user["_id"] = str(user["_id"])
-        return user
+    #  check if the user activeated so returning the user data withought any update
+    retrieved_user = user_functions.find_account_by_email(request, email)
+    print(retrieved_user['status'])
+    if retrieved_user['status'] == user_enums.UserStatus.Active:
+        retrieved_user["_id"] = str(retrieved_user["_id"])
+        return retrieved_user
+    else:
+        if text == "ActivateMyAccount":
+            user = user_functions.avtivate_account(request, email)
+            user["_id"] = str(user["_id"])
+            return user
 # TODO: add login token as return
 
 
@@ -89,10 +91,10 @@ def find_user(request: Request, id: str, user_id: str, role: str):
                                      "The requested information exceeds your security level")
 
 
-def get_users(request: Request, user_status: str):
-    print('user_status: ' + user_status)
-    print(user_enums.UserRoles.admin)
-    if user_status == user_enums.UserRoles.admin:
+def get_users(request: Request, user_role: str):
+    # print('user_role: ' + user_role)
+    # print(user_enums.UserRoles.admin)
+    if user_role == user_enums.UserRoles.admin:
         try:
             users = list(request.app.database["users"].find(limit=100))
             for user in users:

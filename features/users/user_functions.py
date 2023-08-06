@@ -80,18 +80,14 @@ def avtivate_account(request: Request, email: EmailStr):
     """
 
     targeted_user = find_account_by_email(request, email)
-    # print('targeted_user')
-    # print(targeted_user)
     if targeted_user:
         try:
             user = change_account_status(
                 request, targeted_user['_id'], "active")
-            # print('user')
-            # print( user)
             return user
         except Exception as e:
             logger = logger_manager.setup_logger('activate_account.log', 20)
             logger.error(
                 f'Faild to activate account for user with email: {email} due to error: {e}')
             rais_exeption(
-                status.HTTP_304_NOT_MODIFIED, "an error occured while activating your account, please   try again later, or contact supporrt.")
+                status.HTTP_304_NOT_MODIFIED, "an error occured while activating your account, please try again later, or contact supporrt.")
