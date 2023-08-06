@@ -24,7 +24,7 @@ def activate_user(request: Request, token: Optional[str] = Query(None)):
 
 
 @router.get('/all', response_description='get all users for admin', status_code=status.HTTP_200_OK, response_model=List[UserResponse])
-def get_all_users(request: Request, user_role: str = Depends(jwt_manager.decode_token_role)):
+def get_all_users(request: Request, user_role: str = Depends(jwt_manager.decode_token_role), user_status: str = Depends(jwt_manager.decode_token_status)):
     # print("ok")
     return user_db.get_users(request, user_role)
 
@@ -33,3 +33,5 @@ def get_all_users(request: Request, user_role: str = Depends(jwt_manager.decode_
 def get_user_by_id(request: Request, id: str, user_id: str = Depends(jwt_manager.decode_access_token), role: str = Depends(jwt_manager.decode_token_role), status: str = Depends(jwt_manager.decode_token_status)):
     # print("ok")
     return user_db.find_user(request, id, user_id, role)
+
+
