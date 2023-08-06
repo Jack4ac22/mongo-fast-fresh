@@ -54,12 +54,15 @@ def activate_email(request: Request, token: str):
 # TODO: add login token as return
 
 
-def find_user(request: Request, id: str, user_id: str, user_status: str):
+def find_user(request: Request, id: str, user_id: str, role: str):
     """
     finding user in the data base based on the id and the user id which is provided in the token where a logic will be applied to validate the request.
     """
 # check the status and id
-    if ((id == user_id) or (user_status == user_enums.UserRoles.admin)):
+    # print(id)
+    # print(user_id)
+    # print(role)
+    if ((id == user_id) or (role == user_enums.UserRoles.admin)):
         try:
             object_id = ObjectId(id)
             retrieved_user = request.app.database["users"].find_one(

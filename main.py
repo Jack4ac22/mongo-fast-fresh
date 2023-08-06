@@ -1,3 +1,4 @@
+import certifi
 from fastapi import FastAPI, Body, Request, Response, HTTPException, status
 from dotenv import dotenv_values
 from pymongo import MongoClient
@@ -18,7 +19,7 @@ app = FastAPI()
 
 @app.on_event("startup")
 def startup_db_client():
-    app.mongodb_client = MongoClient(settings.atlas_uri)
+    app.mongodb_client = MongoClient(settings.atlas_uri, tlsCAFile=certifi.where())
     app.database = app.mongodb_client[settings.db_name]
 
 

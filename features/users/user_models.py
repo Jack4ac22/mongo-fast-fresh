@@ -39,14 +39,14 @@ class UserBase(BaseModel):
         return v
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
 
 
 class User(UserBase):
     """The main User model, which includes an id and a password Generally used to register a new user account, not as """
-    _id: str = Field(default_factory=uuid.uuid4, alias="_id")
+    id: str = Field(default_factory=uuid.uuid4, alias="_id")
     password: str = Field(...)
-    role: user_enums.UserRoles = Field(default_factory="basic")
+    role: user_enums.UserRoles = Field(default_factory=lambda: user_enums.UserRoles.basic)
     status: user_enums.UserStatus
 
     @validator('password')
@@ -63,7 +63,7 @@ class User(UserBase):
         return password
 
     class Config(UserBase.Config):
-        schema_extra = {
+        json_schema_extra = {
             "example": UserExampleData.user_base
         }
 
@@ -73,7 +73,7 @@ class UserRegisteration(UserBase):
     password: str = Field(...)
 
     class Config(UserBase.Config):
-        schema_extra = {
+        json_schema_extra = {
             "example": UserExampleData.user_registeration
         }
 
@@ -83,7 +83,7 @@ class UserResponse(UserBase):
     id: str = Field(..., alias="_id")
 
     class Config(UserBase.Config):
-        schema_extra = {
+        json_schema_extra = {
             "example": UserExampleData.user_response
         }
 
@@ -94,7 +94,7 @@ class UserLogIn(BaseModel):
     password: str = Field(...)
 
     class Config:
-        allow_population_by_field_name = True
-        schema_extra = {
+        populate_by_name = True
+        json_schema_extra = {
             "example": UserExampleData.user_log_in
         }

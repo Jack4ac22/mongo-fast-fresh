@@ -21,7 +21,7 @@ def auth_user(request: Request, user_credentials: OAuth2PasswordRequestForm = De
 
     corresponding_user = user_functions.find_account_by_email(
         request, user_credentials.username)
-    print(corresponding_user)
+    # print(corresponding_user)
     if not corresponding_user:
         raise incorrectException
 

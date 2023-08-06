@@ -6,6 +6,7 @@ mongomock_motor # 0.0.19
 motor #3.1.1
 passlib # 1.7.4
 pydantic
+pydantic-settings
 pydantic[email,dotenv] #1.10.7
 PyJWT
 pymongo # 4.3.3
@@ -13,4 +14,5 @@ pytest # 7.3.1
 pytest-mock # 3.10.0
 python-dotenv
 python-jose
+python-multipart
 uvicorn # 0.21.1
