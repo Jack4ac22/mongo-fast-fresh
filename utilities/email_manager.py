@@ -31,6 +31,18 @@ def send_mail(reciever: EmailStr, content: str):
 
 #TODO: fix the parameters, maybe use the name and link as parameters or something else.
 def send_html_email_with_subject(email_from: str, email_to: str, email_subject: str, email_content: str):
+    """
+    Sends an HTML email with a specified subject, from a specified email address to a specified recipient.
+
+    Args:
+    email_from (str): The email address from which the email will be sent.
+    email_to (str): The email address of the recipient.
+    email_subject (str): The subject of the email.
+    email_content (str): The content of the email in HTML format.
+
+    Returns:
+    None
+    """
     html = Template(Path('utilities/templates/reset.html').read_text())
     content = html.substitute(
     {'name': 'name', 'link': 'link'})
